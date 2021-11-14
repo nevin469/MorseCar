@@ -58,6 +58,7 @@ int main(void)
     // wait for button press (active low)
     while (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13))
     {
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, true);
     }
 
     while (1) // loop forever, blinking the LED
