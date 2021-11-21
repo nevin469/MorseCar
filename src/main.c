@@ -9,7 +9,7 @@
 // front of exactly ONE of the following lines:
 
 #define BUTTON_BLINK
-// #define LIGHT_SCHEDULER
+#define LIGHT_SCHEDULER
 // #define TIME_RAND
 // #define KEYPAD
 // #define KEYPAD_CONTROL
@@ -53,19 +53,92 @@ int main(void)
     // (depending on which of the #define statements at the top of this file has been uncommented)
 
 #ifdef BUTTON_BLINK
+
+    bool store_signal_0 = 0;
+    bool store_signal_1 = 0;
+    bool store_signal_2 = 0;
+    bool store_signal_3 = 0;
+    bool store_signal_4 = 0;
+
     // Wait for the user to push the blue button, then blink the LED.
 
     // wait for button press (active low)
     while (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13))
     {
-        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, true);
-    }
+        if (HAL_Delay>0 && HAL_Delay<1000){
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, true);
 
-    while (1) // loop forever, blinking the LED
-    {
-        HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-        HAL_Delay(250);  // 250 milliseconds == 1/4 second
-    }
+            serial.print(".");
+            store_signal_0 = store_signal_1; 
+            store_signal_1 = store_signal_2;
+            store_signal_2 = store_signal_3;
+            store_signal_3 = store_signal_4;
+            store_signal_4 = 0;
+        } else{
+            serial.print("-");
+            store_signal_0 = store_signal_1;
+            store_signal_1 = store_signal_2;
+            store_signal_2 = store_signal_3;
+            store_signal_3 = store_signal_4;
+            store_signal_4 = 1;
+            
+        }
+        //For F
+            if (store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 1 && store_signal_4 == 0){
+                serial.print("F");
+            } 
+        //For B
+            if (store_signal_1 == 1 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
+                serial.print("B");
+            }
+
+        //For numbers
+
+        //1
+        if (store_signal_1 == 0 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 1){
+            serial.print("1");
+        }
+
+        //2
+
+        if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 1){
+            serial.print("2");
+        }
+
+        //3
+        if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 1 && store_signal_4 == 1){
+            serial.print("3");
+        }
+        
+        //4
+        if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 1){
+            serial.print("4");
+        }
+
+        //5
+        if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
+            serial.print("5");
+        }
+
+        //6
+        if (store_signal_0 == 1 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
+            serial.print("6");
+        }
+        //7
+        if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
+            serial.print("7");
+        }
+
+        //8
+        if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 1 && store_signal_3 == 0 && store_signal_4 == 0){
+            serial.print("8");
+        }
+
+        //9
+        if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 0){
+            serial.print("9");
+        }  
+}
 #endif
 
 #ifdef LIGHT_SCHEDULER
