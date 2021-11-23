@@ -8,7 +8,7 @@
 // To run a particular example, you should remove the comment (//) in
 // front of exactly ONE of the following lines:
 
-#define BUTTON_BLINK
+//#define BUTTON_BLINK
 #define LIGHT_SCHEDULER
 // #define TIME_RAND
 // #define KEYPAD
@@ -30,30 +30,29 @@ int main(void)
 {
     HAL_Init(); // initialize the Hardware Abstraction Layer
 
-    // Peripherals (including GPIOs) are disabled by default to save power, so we
-    // use the Reset and Clock Control registers to enable the GPIO peripherals that we're using.
+    // // Peripherals (including GPIOs) are disabled by default to save power, so we
+    // // use the Reset and Clock Control registers to enable the GPIO peripherals that we're using.
 
     __HAL_RCC_GPIOA_CLK_ENABLE(); // enable port A (for the on-board LED, for example)
     __HAL_RCC_GPIOB_CLK_ENABLE(); // enable port B (for the rotary encoder inputs, for example)
     __HAL_RCC_GPIOC_CLK_ENABLE(); // enable port C (for the on-board blue pushbutton, for example)
 
-    // initialize the pins to be input, output, alternate function, etc...
+    // // initialize the pins to be input, output, alternate function, etc...
 
     InitializePin(GPIOA, GPIO_PIN_5, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);  // on-board LED
 
-    // note: the on-board pushbutton is fine with the default values (no internal pull-up resistor
-    // is required, since there's one on the board)
+    // // note: the on-board pushbutton is fine with the default values (no internal pull-up resistor
+    // // is required, since there's one on the board)
 
-    // set up for serial communication to the host computer
-    // (anything we write to the serial port will appear in the terminal (i.e. serial monitor) in VSCode)
+    // // set up for serial communication to the host computer
+    // // (anything we write to the serial port will appear in the terminal (i.e. serial monitor) in VSCode)
 
     SerialSetup(9600);
 
-    // as mentioned above, only one of the following code sections will be used
-    // (depending on which of the #define statements at the top of this file has been uncommented)
+    // // as mentioned above, only one of the following code sections will be used
+    // // (depending on which of the #define statements at the top of this file has been uncommented)
 
-#ifdef BUTTON_BLINK
-
+    
     bool store_signal_0 = 0;
     bool store_signal_1 = 0;
     bool store_signal_2 = 0;
@@ -65,17 +64,17 @@ int main(void)
     // wait for button press (active low)
     while (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13))
     {
-        if (HAL_Delay>0 && HAL_Delay<1000){
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, true);
+        if (HAL_Delay>0 && HAL_Delay<1000) {
+            // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, true);
 
-            serial.print(".");
+            SerialPutc(".");
             store_signal_0 = store_signal_1; 
             store_signal_1 = store_signal_2;
             store_signal_2 = store_signal_3;
             store_signal_3 = store_signal_4;
             store_signal_4 = 0;
         } else{
-            serial.print("-");
+            SerialPutc("-");
             store_signal_0 = store_signal_1;
             store_signal_1 = store_signal_2;
             store_signal_2 = store_signal_3;
@@ -85,60 +84,148 @@ int main(void)
         }
         //For F
             if (store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 1 && store_signal_4 == 0){
-                serial.print("F");
+                SerialPutc("F");
             } 
         //For B
             if (store_signal_1 == 1 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
-                serial.print("B");
+                SerialPutc("B");
             }
 
         //For numbers
 
         //1
         if (store_signal_1 == 0 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 1){
-            serial.print("1");
+            SerialPutc("1");
         }
 
         //2
 
         if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 1){
-            serial.print("2");
+            SerialPutc("2");
         }
 
         //3
         if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 1 && store_signal_4 == 1){
-            serial.print("3");
+            SerialPutc("3");
         }
         
         //4
         if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 1){
-            serial.print("4");
+            SerialPutc("4");
         }
 
         //5
         if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
-            serial.print("5");
+            SerialPutc("5");
         }
 
         //6
         if (store_signal_0 == 1 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
-            serial.print("6");
+            SerialPutc("6");
         }
         //7
         if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
-            serial.print("7");
+            SerialPutc("7");
         }
 
         //8
         if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 1 && store_signal_3 == 0 && store_signal_4 == 0){
-            serial.print("8");
+            SerialPutc("8");
         }
 
         //9
         if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 0){
-            serial.print("9");
+            SerialPutc("9");
         }  
 }
+
+#ifdef BUTTON_BLINK
+
+//     bool store_signal_0 = 0;
+//     bool store_signal_1 = 0;
+//     bool store_signal_2 = 0;
+//     bool store_signal_3 = 0;
+//     bool store_signal_4 = 0;
+
+//     // Wait for the user to push the blue button, then blink the LED.
+
+//     // wait for button press (active low)
+//     while (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13))
+//     {
+//         if (HAL_Delay>0 && HAL_Delay<1000) {
+//             // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, true);
+
+//             SerialPutc(".");
+//             store_signal_0 = store_signal_1; 
+//             store_signal_1 = store_signal_2;
+//             store_signal_2 = store_signal_3;
+//             store_signal_3 = store_signal_4;
+//             store_signal_4 = 0;
+//         } else{
+//             SerialPutc("-");
+//             store_signal_0 = store_signal_1;
+//             store_signal_1 = store_signal_2;
+//             store_signal_2 = store_signal_3;
+//             store_signal_3 = store_signal_4;
+//             store_signal_4 = 1;
+            
+//         }
+//         //For F
+//             if (store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 1 && store_signal_4 == 0){
+//                 SerialPutc("F");
+//             } 
+//         //For B
+//             if (store_signal_1 == 1 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
+//                 SerialPutc("B");
+//             }
+
+//         //For numbers
+
+//         //1
+//         if (store_signal_1 == 0 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 1){
+//             SerialPutc("1");
+//         }
+
+//         //2
+
+//         if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 1){
+//             SerialPutc("2");
+//         }
+
+//         //3
+//         if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 1 && store_signal_4 == 1){
+//             SerialPutc("3");
+//         }
+        
+//         //4
+//         if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 1){
+//             SerialPutc("4");
+//         }
+
+//         //5
+//         if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
+//             SerialPutc("5");
+//         }
+
+//         //6
+//         if (store_signal_0 == 1 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
+//             SerialPutc("6");
+//         }
+//         //7
+//         if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
+//             SerialPutc("7");
+//         }
+
+//         //8
+//         if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 1 && store_signal_3 == 0 && store_signal_4 == 0){
+//             SerialPutc("8");
+//         }
+
+//         //9
+//         if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 0){
+//             SerialPutc("9");
+//         }  
+// }
 #endif
 
 #ifdef LIGHT_SCHEDULER
