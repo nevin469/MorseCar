@@ -8,7 +8,7 @@
 // To run a particular example, you should remove the comment (//) in
 // front of exactly ONE of the following lines:
 
-#define BUTTON_BLINK
+//#define BUTTON_BLINK
 // #define LIGHT_SCHEDULER
 // #define TIME_RAND
 // #define KEYPAD
@@ -39,7 +39,10 @@ int main(void)
 
     // initialize the pins to be input, output, alternate function, etc...
 
-    InitializePin(GPIOA, GPIO_PIN_5, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);  // on-board LED
+      // on-board LED
+    InitializePin(GPIOA, GPIO_PIN_5, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);
+    InitializePin(GPIOB, GPIO_PIN_5, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);
+    InitializePin(GPIOB,GPIO_PIN_4, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0 );
 
     // note: the on-board pushbutton is fine with the default values (no internal pull-up resistor
     // is required, since there's one on the board)
@@ -48,10 +51,44 @@ int main(void)
     // (anything we write to the serial port will appear in the terminal (i.e. serial monitor) in VSCode)
 
     SerialSetup(9600);
-
     // as mentioned above, only one of the following code sections will be used
     // (depending on which of the #define statements at the top of this file has been uncommented)
-
+    uint32_t signal_timer = 0;
+    uint32_t last_time = 0;
+    int allowance_short = 0;
+    int allowance_long = 0;\
+    bool pressed = false;
+    while (true) {
+        // uint32_t now = HAL_GetTick();
+        // if (now < 10000) {
+        //     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+        // } 
+        // if (now > 10000 && now < 13000) {
+        //     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+        // }    
+        // if (now > 13000) {
+        //     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, 1);
+        // }
+        uint32_t now = HAL_GetTick();
+        if (!HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13)) {
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 1);
+            signal_timer++;
+            pressed = true;
+        } else {
+            HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, 0);
+            last_time = signal_timer;
+            signal_timer = 0;
+            pressed = false;
+        }
+        if (last_time != 0 && last_time < 100000) {
+            SerialPuts(".");
+            last_time = 0;
+        }
+        if (last_time > 1000) {
+            SerialPuts("-");
+            last_time = 0;
+        }
+    }
 #ifdef BUTTON_BLINK
     // Wait for the user to push the blue button, then blink the LED.
 
@@ -63,21 +100,27 @@ int main(void)
     while (1) // loop forever, blinking the LED
     {
         HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-        HAL_Delay(250);  // 250 milliseconds == 1/4 second
+        HAL_Delay(1000);  // 250 milliseconds == 1/4 second
     }
 #endif
 
 #ifdef LIGHT_SCHEDULER
     // Turn on the LED five seconds after reset, and turn it off again five seconds later.
 
-    while (true) {
-        uint32_t now = HAL_GetTick();
-        if (now > 5000 && now < 10000)
+    // while (true) {
+        /*uint32_t now = HAL_GetTick();
+        if (now < 50)
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, true);   // turn on LED
         else
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, false);  // turn off LED
-    }
-#endif
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, false);  // turn off LED\
+        */
+    //    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3)) {
+    //        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, false);
+    //    } else {
+    //        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, true);
+    //    }
+    // }
+ #endif
 
 #ifdef TIME_RAND
     // This illustrates the use of HAL_GetTick() to get the current time,
@@ -270,6 +313,8 @@ int main(void)
 // This function is called by the HAL once every millisecond
 void SysTick_Handler(void)
 {
-    HAL_IncTick(); // tell HAL that a new tick has happened
+
+    HAL_IncTick();
+    //HAL_IncTick();  tell HAL that a new tick has happened
     // we can do other things in here too if we need to, but be careful
 }
