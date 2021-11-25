@@ -62,23 +62,21 @@ int main(void)
     while (true) {
 
         //Code to rotate the motors
-        uint32_t now = HAL_GetTick();
-
-        //Updating the variable now to convert digits into miliseconds
-        now = ( last_5[5] )* 1000  ;
+        uint32_t now = HAL_GetTick();;
 
         //If the combination if F with a number like F4
-        if (last_5[5] == "F" && now > 0) {
+        if (last_5[5] == "F" &&  (now < last_5) ) {
             HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
 
             //Variable now will decrease until it reaches 0 like F4 will run to 4000 miliseconds and stop
-            now--;
+            now++;
         } 
 
         //If the combination is B like B4, the motor will go backwards
-        else if (last_5[5] == "B" && now > 0) {
+        else if (last_5[5] == "B" && (now < last_5) ) {
             HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
-            now--;
+            //Variable now will decrease until it reaches 0 like B4 will run to 4000 miliseconds and stop 
+            now++;
         }    
 
         //Code to process Morse code signals inputted to terminal
@@ -135,7 +133,6 @@ int main(void)
             last_5[3] = -1;
             last_5[4] = -1;
         }
-    
             if (last_5[0] == 0 && last_5[1] == 0 && last_5[2] == 1 && last_5[3] == 1 && last_5[4] == 1) {
             SerialPuts("2");
             last_5[0] = -1;
