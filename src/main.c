@@ -23,11 +23,10 @@
 #include <stdbool.h> // booleans, i.e. true and false
 #include <stdio.h>   // sprintf() function
 #include <stdlib.h>  // srand() and random() functions
-
+#include <time.h>
 #include "ece198.h"
 
-int main(void)
-{
+int main(void) {
     HAL_Init(); // initialize the Hardware Abstraction Layer
 
     // Peripherals (including GPIOs) are disabled by default to save power, so we
@@ -41,15 +40,21 @@ int main(void)
 
       // on-board LED
     InitializePin(GPIOA, GPIO_PIN_5, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);
+
+    //left side direction pins
+    InitializePin(GPIOA, GPIO_PIN_10, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);
     InitializePin(GPIOB, GPIO_PIN_5, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);
-    InitializePin(GPIOB,GPIO_PIN_4, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0 );
+
+    //right side direction pins
+    InitializePin(GPIOA, GPIO_PIN_8, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);
+    InitializePin(GPIOA, GPIO_PIN_9, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);
 
     // note: the on-board pushbutton is fine with the default values (no internal pull-up resistor
     // is required, since there's one on the board)
 
     // set up for serial communication to the host computer
     // (anything we write to the serial port will appear in the terminal (i.e. serial monitor) in VSCode)
-
+    HAL_Delay(100);
     SerialSetup(9600);
     // as mentioned above, only one of the following code sections will be used
     // (depending on which of the #define statements at the top of this file has been uncommented)
@@ -59,18 +64,12 @@ int main(void)
     int allowance_long = 0;
     bool pressed = false;
     int last_5[5] = {-1,-1,-1,-1,-1};
+    int last_2_characters[2] = {-1,-1};
+    // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+    // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+
     while (true) {
-        // uint32_t now = HAL_GetTick();
-        // if (now < 10000) {
-        //     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
-        // } 
-        // if (now > 10000 && now < 13000) {
-        //     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
-        // }    
-        // if (now > 13000) {
-        //     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, 1);
-        // }
-        uint32_t now = HAL_GetTick();
+                    uint32_t now = HAL_GetTick();
         if (!HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13)) {
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 1);
             signal_timer++;
@@ -106,6 +105,8 @@ int main(void)
             last_5[2] = -1;
             last_5[3] = -1;
             last_5[4] = -1;
+            last_2_characters[0] =  last_2_characters[1];
+            last_2_characters[1] = 11;
         }
         if (last_5[1] == 1 && last_5[2] == 0 && last_5[3] == 0 && last_5[4] == 0) {
             SerialPuts("B");
@@ -114,6 +115,8 @@ int main(void)
             last_5[2] = -1;
             last_5[3] = -1;
             last_5[4] = -1;
+            last_2_characters[0] =  last_2_characters[1];
+            last_2_characters[1] = 0;
         }
         if (last_5[0] == 0 && last_5[1] == 1 && last_5[2] == 1 && last_5[3] == 1 && last_5[4] == 1) {
             SerialPuts("1");
@@ -122,6 +125,8 @@ int main(void)
             last_5[2] = -1;
             last_5[3] = -1;
             last_5[4] = -1;
+            last_2_characters[0] =  last_2_characters[1];
+            last_2_characters[1] = 1;
         }
     
             if (last_5[0] == 0 && last_5[1] == 0 && last_5[2] == 1 && last_5[3] == 1 && last_5[4] == 1) {
@@ -131,6 +136,8 @@ int main(void)
             last_5[2] = -1;
             last_5[3] = -1;
             last_5[4] = -1;
+            last_2_characters[0] =  last_2_characters[1];
+            last_2_characters[1] = 2;
         }
     
             if (last_5[0] == 0 && last_5[1] == 0 && last_5[2] == 0 && last_5[3] == 1 && last_5[4] == 1) {
@@ -140,6 +147,8 @@ int main(void)
             last_5[2] = -1;
             last_5[3] = -1;
             last_5[4] = -1;
+            last_2_characters[0] =  last_2_characters[1];
+            last_2_characters[1] = 3;
         }
                     if (last_5[0] == 0 && last_5[1] == 0 && last_5[2] == 0 && last_5[3] == 0 && last_5[4] == 1) {
             SerialPuts("4");
@@ -148,6 +157,8 @@ int main(void)
             last_5[2] = -1;
             last_5[3] = -1;
             last_5[4] = -1;
+            last_2_characters[0] =  last_2_characters[1];
+            last_2_characters[1] = 4;
         }
                     if (last_5[0] == 0 && last_5[1] == 0 && last_5[2] == 0 && last_5[3] == 0 && last_5[4] == 0) {
             SerialPuts("5");
@@ -156,6 +167,8 @@ int main(void)
             last_5[2] = -1;
             last_5[3] = -1;
             last_5[4] = -1;
+            last_2_characters[0] =  last_2_characters[1];
+            last_2_characters[1] = 5;
         }
                     if (last_5[0] == 1 && last_5[1] == 0 && last_5[2] == 0 && last_5[3] == 0 && last_5[4] == 0) {
             SerialPuts("6");
@@ -164,6 +177,8 @@ int main(void)
             last_5[2] = -1;
             last_5[3] = -1;
             last_5[4] = -1;
+            last_2_characters[0] =  last_2_characters[1];
+            last_2_characters[1] = 6;
         }
                     if (last_5[0] == 1 && last_5[1] == 1 && last_5[2] == 0 && last_5[3] == 0 && last_5[4] == 0) {
             SerialPuts("7");
@@ -172,6 +187,8 @@ int main(void)
             last_5[2] = -1;
             last_5[3] = -1;
             last_5[4] = -1;
+            last_2_characters[0] =  last_2_characters[1];
+            last_2_characters[1] = 7;
         }
                     if (last_5[0] == 1 && last_5[1] == 1 && last_5[2] == 1 && last_5[3] == 0 && last_5[4] == 0) {
             SerialPuts("8");
@@ -180,6 +197,8 @@ int main(void)
             last_5[2] = -1;
             last_5[3] = -1;
             last_5[4] = -1;
+            last_2_characters[0] =  last_2_characters[1];
+            last_2_characters[1] = 8;
         }
                     if (last_5[0] == 1 && last_5[1] == 1 && last_5[2] == 1 && last_5[3] == 1 && last_5[4] == 0) {
             SerialPuts("9");
@@ -188,6 +207,233 @@ int main(void)
             last_5[2] = -1;
             last_5[3] = -1;
             last_5[4] = -1;
+            last_2_characters[0] =  last_2_characters[1];
+            last_2_characters[1] = 9;
+        }
+        // rememeber 11 represents forwards and 0 represents backwards
+        if (last_2_characters[0] == 11 && last_2_characters[1] > 0 && last_2_characters[1] < 10) {
+            if (last_2_characters[1] == 1) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 1000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 2) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 2000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 3) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 3000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 4) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 4000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 5) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 5000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 6) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 6000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 7) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 7000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 8) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 8000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 9) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 9000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+        } else {
+             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 0);
+        }
+        if (last_2_characters[0] == 0 && last_2_characters[1] > 0 && last_2_characters[1] < 10) {
+            if (last_2_characters[1] == 1) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 1000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 2) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 2000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 3) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 3000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 4) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 4000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 5) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 5000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 6) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 6000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 7) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 7000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 8) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 8000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+            if (last_2_characters[1] == 9) {
+                uint32_t start = HAL_GetTick();
+                uint32_t end = start + 9000;
+                while (start < end) {
+                    start = HAL_GetTick();
+                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                }
+                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                last_2_characters[0] = -1;
+                last_2_characters[1] = -1;
+            }
+        } else {
+            HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
         }
     }
 #ifdef BUTTON_BLINK
