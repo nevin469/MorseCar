@@ -128,7 +128,6 @@ int main(void) {
             last_2_characters[0] =  last_2_characters[1];
             last_2_characters[1] = 1;
         }
-    
             if (last_5[0] == 0 && last_5[1] == 0 && last_5[2] == 1 && last_5[3] == 1 && last_5[4] == 1) {
             SerialPuts("2");
             last_5[0] = -1;
@@ -338,9 +337,11 @@ int main(void) {
                 uint32_t end = start + 1000;
                 while (start < end) {
                     start = HAL_GetTick();
-                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 1);
                 }
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
                 last_2_characters[0] = -1;
                 last_2_characters[1] = -1;
             }
@@ -349,9 +350,11 @@ int main(void) {
                 uint32_t end = start + 2000;
                 while (start < end) {
                     start = HAL_GetTick();
-                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 1);
                 }
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
                 last_2_characters[0] = -1;
                 last_2_characters[1] = -1;
             }
@@ -360,9 +363,11 @@ int main(void) {
                 uint32_t end = start + 3000;
                 while (start < end) {
                     start = HAL_GetTick();
-                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 1);
                 }
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
                 last_2_characters[0] = -1;
                 last_2_characters[1] = -1;
             }
@@ -371,9 +376,11 @@ int main(void) {
                 uint32_t end = start + 4000;
                 while (start < end) {
                     start = HAL_GetTick();
-                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 1);
                 }
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
                 last_2_characters[0] = -1;
                 last_2_characters[1] = -1;
             }
@@ -382,9 +389,11 @@ int main(void) {
                 uint32_t end = start + 5000;
                 while (start < end) {
                     start = HAL_GetTick();
-                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 1);
                 }
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
                 last_2_characters[0] = -1;
                 last_2_characters[1] = -1;
             }
@@ -393,9 +402,11 @@ int main(void) {
                 uint32_t end = start + 6000;
                 while (start < end) {
                     start = HAL_GetTick();
-                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 1);
                 }
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
                 last_2_characters[0] = -1;
                 last_2_characters[1] = -1;
             }
@@ -404,9 +415,11 @@ int main(void) {
                 uint32_t end = start + 7000;
                 while (start < end) {
                     start = HAL_GetTick();
-                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 1);
                 }
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
                 last_2_characters[0] = -1;
                 last_2_characters[1] = -1;
             }
@@ -415,9 +428,11 @@ int main(void) {
                 uint32_t end = start + 8000;
                 while (start < end) {
                     start = HAL_GetTick();
-                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 1);
                 }
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
                 last_2_characters[0] = -1;
                 last_2_characters[1] = -1;
             }
@@ -426,9 +441,11 @@ int main(void) {
                 uint32_t end = start + 9000;
                 while (start < end) {
                     start = HAL_GetTick();
-                    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 1);
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 1);
                 }
-                HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, 0);
+                HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, 0);
                 last_2_characters[0] = -1;
                 last_2_characters[1] = -1;
             }
@@ -665,3 +682,4 @@ void SysTick_Handler(void)
     //HAL_IncTick();  tell HAL that a new tick has happened
     // we can do other things in here too if we need to, but be careful
 }
+
