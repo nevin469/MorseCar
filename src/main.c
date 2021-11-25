@@ -1,5 +1,4 @@
 
-
 // Sample code for ECE 198
 
 // Written by Bernie Roehl, August 2021
@@ -65,8 +64,11 @@ int main(void) {
     // int allowance_short = 0;
     // int allowance_long = 0;
     bool pressed = false;
+    // last 5 is an array that stores the last 5 dashes/dots, -1 meaning no value
     int last_5[5] = {-1,-1,-1,-1,-1};
+    // last 2 is an array that stores the last 2 characters(for ex: f,b,2,6), -1 means no value
     int last_2_characters[2] = {-1,-1};
+    //for these arrays they are reset by setting all values to -1
     // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, 1);
     // HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
 
@@ -212,6 +214,8 @@ int main(void) {
             last_2_characters[1] = 9;
         }
         // rememeber 11 represents forwards and 0 represents backwards
+        //  setting GPIOA_10 and GPIOB_5 to high will make motors go forwards
+        //  setting GPIOA_8 and GPIOB_9 to high will make motors go backwards
         if (last_2_characters[0] == 11 && last_2_characters[1] > 0 && last_2_characters[1] < 10) {
             if (last_2_characters[1] == 1) {
                 uint32_t start = HAL_GetTick();
