@@ -9,7 +9,7 @@
 // front of exactly ONE of the following lines:
 
 //#define BUTTON_BLINK
-#define LIGHT_SCHEDULER
+// #define LIGHT_SCHEDULER
 // #define TIME_RAND
 // #define KEYPAD
 // #define KEYPAD_CONTROL
@@ -30,215 +30,210 @@ int main(void)
 {
     HAL_Init(); // initialize the Hardware Abstraction Layer
 
-    // // Peripherals (including GPIOs) are disabled by default to save power, so we
-    // // use the Reset and Clock Control registers to enable the GPIO peripherals that we're using.
+    // Peripherals (including GPIOs) are disabled by default to save power, so we
+    // use the Reset and Clock Control registers to enable the GPIO peripherals that we're using.
 
     __HAL_RCC_GPIOA_CLK_ENABLE(); // enable port A (for the on-board LED, for example)
     __HAL_RCC_GPIOB_CLK_ENABLE(); // enable port B (for the rotary encoder inputs, for example)
     __HAL_RCC_GPIOC_CLK_ENABLE(); // enable port C (for the on-board blue pushbutton, for example)
 
-    // // initialize the pins to be input, output, alternate function, etc...
+    // initialize the pins to be input, output, alternate function, etc...
 
-    InitializePin(GPIOA, GPIO_PIN_5, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);  // on-board LED
+      // on-board LED
+    InitializePin(GPIOA, GPIO_PIN_5, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);
+    InitializePin(GPIOB, GPIO_PIN_5, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0);
+    InitializePin(GPIOB,GPIO_PIN_4, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, 0 );
 
-    // // note: the on-board pushbutton is fine with the default values (no internal pull-up resistor
-    // // is required, since there's one on the board)
+    // note: the on-board pushbutton is fine with the default values (no internal pull-up resistor
+    // is required, since there's one on the board)
 
-    // // set up for serial communication to the host computer
-    // // (anything we write to the serial port will appear in the terminal (i.e. serial monitor) in VSCode)
+    // set up for serial communication to the host computer
+    // (anything we write to the serial port will appear in the terminal (i.e. serial monitor) in VSCode)
 
     SerialSetup(9600);
+    // as mentioned above, only one of the following code sections will be used
+    // (depending on which of the #define statements at the top of this file has been uncommented)
+    uint32_t signal_timer = 0;
+    uint32_t last_time = 0;
+    int allowance_short = 0;
+    int allowance_long = 0;
+    bool pressed = false;
+    int last_5[5] = {-1,-1,-1,-1,-1};
+    while (true) {
 
-    // // as mentioned above, only one of the following code sections will be used
-    // // (depending on which of the #define statements at the top of this file has been uncommented)
+        //Code to rotate the motors
+        uint32_t now = HAL_GetTick();
 
+        //Updating the variable now to convert digits into miliseconds
+        now = ( last_5[5] )* 1000  ;
+
+        //If the combination if F with a number like F4
+        if (last_5[5] == "F" && now > 0) {
+            HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 1);
+
+            //Variable now will decrease until it reaches 0 like F4 will run to 4000 miliseconds and stop
+            now--;
+        } 
+
+        //If the combination is B like B4, the motor will go backwards
+        else if (last_5[5] == "B" && now > 0) {
+            HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, 0);
+            now--;
+        }    
+
+        //Code to process Morse code signals inputted to terminal
+        uint32_t now = HAL_GetTick();
+        if (!HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13)) {
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, 1);
+            signal_timer++;
+            pressed = true;
+        } else {
+            HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5, 0);
+            last_time = signal_timer;
+            signal_timer = 0;
+            pressed = false;
+        }
+        if (last_time != 0 && last_time < 100000) {
+            SerialPuts(".");
+            last_time = 0;
+            last_5[0] = last_5[1];
+            last_5[1] = last_5[2];
+            last_5[2] = last_5[3];
+            last_5[3] = last_5[4];
+            last_5[4] = 0;
+        }
+        if (last_time > 1000) {
+            SerialPuts("-");
+            last_time = 0;
+            last_5[0] = last_5[1];
+            last_5[1] = last_5[2];
+            last_5[2] = last_5[3];
+            last_5[3] = last_5[4];
+            last_5[4] = 1;
+        }
+        if (last_5[1] == 0 && last_5[2] == 0 && last_5[3] == 1 && last_5[4] == 0) {
+            SerialPuts("F");
+            last_5[0] = -1;
+            last_5[1] = -1;
+            last_5[2] = -1;
+            last_5[3] = -1;
+            last_5[4] = -1;
+        }
+        if (last_5[1] == 1 && last_5[2] == 0 && last_5[3] == 0 && last_5[4] == 0) {
+            SerialPuts("B");
+            last_5[0] = -1;
+            last_5[1] = -1;
+            last_5[2] = -1;
+            last_5[3] = -1;
+            last_5[4] = -1;
+        }
+        if (last_5[0] == 0 && last_5[1] == 1 && last_5[2] == 1 && last_5[3] == 1 && last_5[4] == 1) {
+            SerialPuts("1");
+            last_5[0] = -1;
+            last_5[1] = -1;
+            last_5[2] = -1;
+            last_5[3] = -1;
+            last_5[4] = -1;
+        }
     
-    bool store_signal_0 = 0;
-    bool store_signal_1 = 0;
-    bool store_signal_2 = 0;
-    bool store_signal_3 = 0;
-    bool store_signal_4 = 0;
-
+            if (last_5[0] == 0 && last_5[1] == 0 && last_5[2] == 1 && last_5[3] == 1 && last_5[4] == 1) {
+            SerialPuts("2");
+            last_5[0] = -1;
+            last_5[1] = -1;
+            last_5[2] = -1;
+            last_5[3] = -1;
+            last_5[4] = -1;
+        }
+    
+            if (last_5[0] == 0 && last_5[1] == 0 && last_5[2] == 0 && last_5[3] == 1 && last_5[4] == 1) {
+            SerialPuts("3");
+            last_5[0] = -1;
+            last_5[1] = -1;
+            last_5[2] = -1;
+            last_5[3] = -1;
+            last_5[4] = -1;
+        }
+                    if (last_5[0] == 0 && last_5[1] == 0 && last_5[2] == 0 && last_5[3] == 0 && last_5[4] == 1) {
+            SerialPuts("4");
+            last_5[0] = -1;
+            last_5[1] = -1;
+            last_5[2] = -1;
+            last_5[3] = -1;
+            last_5[4] = -1;
+        }
+                    if (last_5[0] == 0 && last_5[1] == 0 && last_5[2] == 0 && last_5[3] == 0 && last_5[4] == 0) {
+            SerialPuts("5");
+            last_5[0] = -1;
+            last_5[1] = -1;
+            last_5[2] = -1;
+            last_5[3] = -1;
+            last_5[4] = -1;
+        }
+                    if (last_5[0] == 1 && last_5[1] == 0 && last_5[2] == 0 && last_5[3] == 0 && last_5[4] == 0) {
+            SerialPuts("6");
+            last_5[0] = -1;
+            last_5[1] = -1;
+            last_5[2] = -1;
+            last_5[3] = -1;
+            last_5[4] = -1;
+        }
+                    if (last_5[0] == 1 && last_5[1] == 1 && last_5[2] == 0 && last_5[3] == 0 && last_5[4] == 0) {
+            SerialPuts("7");
+            last_5[0] = -1;
+            last_5[1] = -1;
+            last_5[2] = -1;
+            last_5[3] = -1;
+            last_5[4] = -1;
+        }
+                    if (last_5[0] == 1 && last_5[1] == 1 && last_5[2] == 1 && last_5[3] == 0 && last_5[4] == 0) {
+            SerialPuts("8");
+            last_5[0] = -1;
+            last_5[1] = -1;
+            last_5[2] = -1;
+            last_5[3] = -1;
+            last_5[4] = -1;
+        }
+                    if (last_5[0] == 1 && last_5[1] == 1 && last_5[2] == 1 && last_5[3] == 1 && last_5[4] == 0) {
+            SerialPuts("9");
+            last_5[0] = -1;
+            last_5[1] = -1;
+            last_5[2] = -1;
+            last_5[3] = -1;
+            last_5[4] = -1;
+        }
+    }
+#ifdef BUTTON_BLINK
     // Wait for the user to push the blue button, then blink the LED.
 
     // wait for button press (active low)
     while (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13))
     {
-        if (HAL_Delay>0 && HAL_Delay<1000) {
-            // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, true);
+    }
 
-            SerialPutc(".");
-            store_signal_0 = store_signal_1; 
-            store_signal_1 = store_signal_2;
-            store_signal_2 = store_signal_3;
-            store_signal_3 = store_signal_4;
-            store_signal_4 = 0;
-        } else{
-            SerialPutc("-");
-            store_signal_0 = store_signal_1;
-            store_signal_1 = store_signal_2;
-            store_signal_2 = store_signal_3;
-            store_signal_3 = store_signal_4;
-            store_signal_4 = 1;
-            
-        }
-        //For F
-            if (store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 1 && store_signal_4 == 0){
-                SerialPutc("F");
-            } 
-        //For B
-            if (store_signal_1 == 1 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
-                SerialPutc("B");
-            }
-
-        //For numbers
-
-        //1
-        if (store_signal_1 == 0 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 1){
-            SerialPutc("1");
-        }
-
-        //2
-
-        if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 1){
-            SerialPutc("2");
-        }
-
-        //3
-        if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 1 && store_signal_4 == 1){
-            SerialPutc("3");
-        }
-        
-        //4
-        if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 1){
-            SerialPutc("4");
-        }
-
-        //5
-        if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
-            SerialPutc("5");
-        }
-
-        //6
-        if (store_signal_0 == 1 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
-            SerialPutc("6");
-        }
-        //7
-        if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
-            SerialPutc("7");
-        }
-
-        //8
-        if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 1 && store_signal_3 == 0 && store_signal_4 == 0){
-            SerialPutc("8");
-        }
-
-        //9
-        if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 0){
-            SerialPutc("9");
-        }  
-}
-
-#ifdef BUTTON_BLINK
-
-//     bool store_signal_0 = 0;
-//     bool store_signal_1 = 0;
-//     bool store_signal_2 = 0;
-//     bool store_signal_3 = 0;
-//     bool store_signal_4 = 0;
-
-//     // Wait for the user to push the blue button, then blink the LED.
-
-//     // wait for button press (active low)
-//     while (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13))
-//     {
-//         if (HAL_Delay>0 && HAL_Delay<1000) {
-//             // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, true);
-
-//             SerialPutc(".");
-//             store_signal_0 = store_signal_1; 
-//             store_signal_1 = store_signal_2;
-//             store_signal_2 = store_signal_3;
-//             store_signal_3 = store_signal_4;
-//             store_signal_4 = 0;
-//         } else{
-//             SerialPutc("-");
-//             store_signal_0 = store_signal_1;
-//             store_signal_1 = store_signal_2;
-//             store_signal_2 = store_signal_3;
-//             store_signal_3 = store_signal_4;
-//             store_signal_4 = 1;
-            
-//         }
-//         //For F
-//             if (store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 1 && store_signal_4 == 0){
-//                 SerialPutc("F");
-//             } 
-//         //For B
-//             if (store_signal_1 == 1 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
-//                 SerialPutc("B");
-//             }
-
-//         //For numbers
-
-//         //1
-//         if (store_signal_1 == 0 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 1){
-//             SerialPutc("1");
-//         }
-
-//         //2
-
-//         if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 1){
-//             SerialPutc("2");
-//         }
-
-//         //3
-//         if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 1 && store_signal_4 == 1){
-//             SerialPutc("3");
-//         }
-        
-//         //4
-//         if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 1){
-//             SerialPutc("4");
-//         }
-
-//         //5
-//         if (store_signal_0 == 0 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
-//             SerialPutc("5");
-//         }
-
-//         //6
-//         if (store_signal_0 == 1 && store_signal_1 == 0 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
-//             SerialPutc("6");
-//         }
-//         //7
-//         if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 0 && store_signal_3 == 0 && store_signal_4 == 0){
-//             SerialPutc("7");
-//         }
-
-//         //8
-//         if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 1 && store_signal_3 == 0 && store_signal_4 == 0){
-//             SerialPutc("8");
-//         }
-
-//         //9
-//         if (store_signal_0 == 1 && store_signal_1 == 1 && store_signal_2 == 1 && store_signal_3 == 1 && store_signal_4 == 0){
-//             SerialPutc("9");
-//         }  
-// }
+    while (1) // loop forever, blinking the LED
+    {
+        HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+        HAL_Delay(1000);  // 250 milliseconds == 1/4 second
+    }
 #endif
 
 #ifdef LIGHT_SCHEDULER
     // Turn on the LED five seconds after reset, and turn it off again five seconds later.
 
-    while (true) {
-        uint32_t now = HAL_GetTick();
-        if (now > 5000 && now < 10000)
+    // while (true) {
+        /*uint32_t now = HAL_GetTick();
+        if (now < 50)
             HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, true);   // turn on LED
         else
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, false);  // turn off LED
-    }
-#endif
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, false);  // turn off LED\
+        */
+    //    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3)) {
+    //        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, false);
+    //    } else {
+    //        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, true);
+    //    }
+    // }
+ #endif
 
 #ifdef TIME_RAND
     // This illustrates the use of HAL_GetTick() to get the current time,
@@ -431,6 +426,9 @@ int main(void)
 // This function is called by the HAL once every millisecond
 void SysTick_Handler(void)
 {
-    HAL_IncTick(); // tell HAL that a new tick has happened
+
+    HAL_IncTick();
+    //HAL_IncTick();  tell HAL that a new tick has happened
     // we can do other things in here too if we need to, but be careful
 }
+
