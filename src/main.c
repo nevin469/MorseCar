@@ -1,3 +1,5 @@
+
+
 // Sample code for ECE 198
 
 // Written by Bernie Roehl, August 2021
@@ -60,8 +62,8 @@ int main(void) {
     // (depending on which of the #define statements at the top of this file has been uncommented)
     uint32_t signal_timer = 0;
     uint32_t last_time = 0;
-    int allowance_short = 0;
-    int allowance_long = 0;
+    // int allowance_short = 0;
+    // int allowance_long = 0;
     bool pressed = false;
     int last_5[5] = {-1,-1,-1,-1,-1};
     int last_2_characters[2] = {-1,-1};
@@ -682,4 +684,3 @@ void SysTick_Handler(void)
     //HAL_IncTick();  tell HAL that a new tick has happened
     // we can do other things in here too if we need to, but be careful
 }
-
