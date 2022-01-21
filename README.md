@@ -1,6 +1,6 @@
 # MorseCar
 
-##Components:##
+## Components:##
 
 STM32 Board: The STM32F401 is a microcontroller. It is used to execute the firmware needed for the project. Two STM microcontrollers are needed for the project. One is needed for the controller module, whilst the other is required for the car module. The controller STM32 will only be connected to a button and a NRF24L01 chip. In this case, its purpose will be to get inputs from the button and output them to the NRF24L01 chip which will then send these inputs to the car module. The car module STM32 will be connected to a NRF24L01 chip, a L298 module, ultrasonic sensors, and LEDS. It receives inputs from the NRF24L01 chip which will be configured to collect signals from the other NRF24L01 chip attached to the controller. These inputs which will be in morse code will be processed by the STM32 and act as instructions for how the car will move. The STM32 will then output these instructions to the L298 module.
 
