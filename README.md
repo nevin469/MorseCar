@@ -1,4 +1,6 @@
 # MorseCar
+![20211125_121334](https://user-images.githubusercontent.com/85756525/150576167-1743dff8-e4e3-42a1-bea2-97f43840c8ee.jpg)
+
 
 ## Components:
 
