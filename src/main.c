@@ -1,14 +1,4 @@
 
-// Sample code for ECE 198
-
-// Written by Bernie Roehl, August 2021
-
-// This file contains code for a number of different examples.
-// Each one is surrounded by an #ifdef ... #endif block inside of main().
-
-// To run a particular example, you should remove the comment (//) in
-// front of exactly ONE of the following lines:
-
 //#define BUTTON_BLINK
 // #define LIGHT_SCHEDULER
 // #define TIME_RAND
